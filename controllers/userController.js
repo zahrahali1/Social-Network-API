@@ -1,7 +1,6 @@
 const { User, Thought } = require('../models');
 
-module.exports = {
-    
+const userController = {
     async createUser(req, res) {
         try {
             const user = await User.create(req.body);
@@ -11,7 +10,7 @@ module.exports = {
             res.status(500).json({ message: 'An error occurred while creating the user', error });
         }
     },
-    
+
     async getUsers(req, res) {
         try {
             const users = await User.find({}).select('-__v');
@@ -68,6 +67,12 @@ module.exports = {
             }
 
             await Thought.deleteMany({ _id: { $in: user.thoughts } });
+           
+            await User.updateMany(
+                { _id: { $in: user.friends } },
+                { $pull: { friends: req.params.id } }
+            );
+
             res.json({ message: 'User and their associated thoughts have been deleted' });
         } catch (error) {
             console.error(error);
@@ -77,14 +82,20 @@ module.exports = {
 
     async addFriend(req, res) {
         try {
+            const { userId, friendId } = req.params;
+
+            if (userId === friendId) {
+                return res.status(400).json({ message: 'Cannot add yourself as a friend' });
+            }
+
             const user = await User.findOneAndUpdate(
-                { _id: req.params.userId },
-                { $addToSet: { friends: req.params.friendId } },
+                { _id: userId, friends: { $ne: friendId } }, 
+                { $addToSet: { friends: friendId } },
                 { new: true }
             );
 
             if (!user) {
-                return res.status(404).json({ message: 'No user found with the provided ID' });
+                return res.status(404).json({ message: 'No user found with the provided ID or friend already added' });
             }
 
             res.json(user);
@@ -94,16 +105,22 @@ module.exports = {
         }
     },
 
-    async deleteFriend(req, res) {
+    async removeFriend(req, res) {
         try {
-            const user = await User.findOneAndUpdate(
-                { _id: req.params.userId },
-                { $pull: { friends: req.params.friendId } },
+            const { userId, friendId } = req.params;
+
+            if (userId === friendId) {
+                return res.status(400).json({ message: 'Cannot remove yourself as a friend' });
+            }
+
+            const user = await User.findByIdAndUpdate(
+                userId,
+                { $pull: { friends: friendId } },
                 { new: true }
             );
 
             if (!user) {
-                return res.status(404).json({ message: 'No user found with the provided ID' });
+                return res.status(404).json({ message: 'No user found with the provided ID or friend not found' });
             }
 
             res.json(user);
@@ -113,3 +130,5 @@ module.exports = {
         }
     }
 };
+
+module.exports = userController;
