@@ -7,8 +7,8 @@ const cwd = process.cwd();
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-const activity = cwd.includes('01-Activities')
-  ? cwd.split('01-Activities')[1]
+const activity = cwd.includes('Social-Network-API')
+  ? cwd.split('Social-Network-API')[1]
   : cwd;
 
 app.use(express.urlencoded({ extended: true }));
