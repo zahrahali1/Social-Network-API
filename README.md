@@ -12,9 +12,10 @@ I acknowledge that the project is a work in progress and requires further debugg
 The error that occured while running the program to test
 <img width="1440" alt="Screenshot 2024-07-09 at 10 50 56" src="https://github.com/zahrahali1/Social-Network-API/assets/103753424/d36460cb-2185-4faf-b5b9-75ea982c99fd">
 
-[![Watch the video](assets/SNAPI.png)]
 
+Walkthrough Video: 
 
-[![Watch the video](assets/SNAPI.png)](https://github.com/zahrahali/your-repo/raw/main/assets/SNAPI.mov)
+https://github.com/user-attachments/assets/df9f0b2b-9305-447e-ae93-09dff01f9635
+
 
 
